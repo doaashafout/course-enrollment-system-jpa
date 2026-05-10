@@ -1,0 +1,13 @@
+.root { -fx-font-family: "Segoe UI"; -fx-background-color: #f4f6f8; }
+.sidebar { -fx-background-color: #263238; -fx-padding: 25; }
+.logo { -fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold; }
+.section-label { -fx-text-fill: #cfd8dc; -fx-font-size: 12px; -fx-font-weight: bold; }
+.input { -fx-pref-height: 45px; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-max-width: Infinity; }
+.content { -fx-padding: 25; -fx-background-color: #f4f6f8; }
+.custom-table { -fx-background-radius: 10px; }
+.button { -fx-cursor: hand; -fx-background-radius: 8px; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-height: 35px; }
+.btn-primary { -fx-background-color: #1976d2; }
+.btn-secondary { -fx-background-color: #607d8b; }
+.btn-success { -fx-background-color: #2e7d32; }
+.btn-danger { -fx-background-color: #c62828; }
+ 
