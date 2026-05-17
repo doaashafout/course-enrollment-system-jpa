@@ -18,7 +18,9 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import models.Course;
 import models.Enrollment;
+import models.Student;
 
 public class EnrollmentController implements Initializable {
 
@@ -39,9 +41,9 @@ public class EnrollmentController implements Initializable {
     @FXML
     private TableColumn<Enrollment, String> enrollmentDateTC;
 
-    CourseDAO courseDAO = new CourseDAO();
-    StudentDAO studentDAO = new StudentDAO();
-    EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
+    CourseDAO coursedao = new CourseDAO();
+    StudentDAO studentdao = new StudentDAO();
+    EnrollmentDAO enrollmentdao = new EnrollmentDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -50,10 +52,10 @@ public class EnrollmentController implements Initializable {
         courseIdTC.setCellValueFactory(new PropertyValueFactory<>("courseId"));
         enrollmentDateTC.setCellValueFactory(new PropertyValueFactory<>("enrollmentDate"));
 
-        List<Integer> studentIds = studentDAO.getAllStudentsids();
+        List<Integer> studentIds = studentdao.getAllStudentsids();
         studentIdCB.getItems().addAll(studentIds);
 
-        List<Integer> courseIds = courseDAO.getAllCourseids();
+        List<Integer> courseIds = coursedao.getAllCourseids();
         courseIdCB.getItems().addAll(courseIds);
 
         table.getSelectionModel().selectedItemProperty().addListener(
@@ -68,7 +70,7 @@ public class EnrollmentController implements Initializable {
 
     @FXML
     private void viewHandle(ActionEvent event) {
-        List<Enrollment> enrollments = enrollmentDAO.findAll();
+        List<Enrollment> enrollments = enrollmentdao.findAll();
         table.getItems().setAll(enrollments);
     }
 
@@ -80,18 +82,20 @@ public class EnrollmentController implements Initializable {
                     "Please select a student first");
             return;
         }
-        List<Enrollment> enrollments = enrollmentDAO.findByStudentId(studentId);
+        List<Enrollment> enrollments = enrollmentdao.findByStudentId(studentId);
         table.getItems().setAll(enrollments);
     }
 
     @FXML
     private void addHandle(ActionEvent event) {
         if (enrollmentValidator()) {
-            Integer studentId = studentIdCB.getValue();
-            Integer courseId = courseIdCB.getValue();
-            LocalDate ed = enrollmentDate.getValue();
-            Enrollment e = new Enrollment(studentId, courseId, ed.toString());
-            boolean success = enrollmentDAO.insertOne(e);
+            Integer student_id = studentIdCB.getValue();
+            Integer course_id = courseIdCB.getValue();
+            Student student = studentdao.findById(student_id);
+            Course course = coursedao.findById(course_id);
+            String ed = enrollmentDate.getValue().toString();
+            Enrollment e = new Enrollment(student, course, ed);
+            boolean success = enrollmentdao.insertOne(e);
             if (success) {
                 clear();
                 viewHandle(event);
@@ -121,13 +125,12 @@ public class EnrollmentController implements Initializable {
             return;
         }
 
-        Enrollment updated = new Enrollment(
-                e.getEnrollmentId(),
-                studentIdCB.getValue(),
-                courseIdCB.getValue(),
-                enrollmentDate.getValue().toString()
-        );
-        boolean success = enrollmentDAO.updateOne(updated);
+        Student student = studentdao.findById(studentIdCB.getValue());
+        Course course = coursedao.findById(courseIdCB.getValue());
+        e.setStudent(student);
+        e.setCourse(course);
+        e.setEnrollmentDate(enrollmentDate.getValue().toString());
+        boolean success = enrollmentdao.updateOne(e);
         if (success) {
             showInfoAlert("Success", "Enrollment Updated Successfully");
             clear();
@@ -146,7 +149,7 @@ public class EnrollmentController implements Initializable {
         if (showConfirmationAlert("Delete Confirmation",
                 "Are you sure",
                 "Do you want to delete this enrollment record")) {
-            enrollmentDAO.deleteOne(e);
+            enrollmentdao.deleteOne(e);
             viewHandle(event);
             clear();
         }

@@ -1,44 +1,74 @@
 package models;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "enrollment")
 public class Enrollment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "enrollment_id")
     private int enrollmentId;
-    private int studentId;
-    private int courseId;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    @Column(name = "enrollment_date")
     private String enrollmentDate;
 
     public Enrollment() {}
 
-    public Enrollment(int studentId, int courseId, String enrollmentDate) {
-        this.studentId = studentId;
-        this.courseId = courseId;
+    public Enrollment(Student student, Course course, String enrollmentDate) {
+        this.student = student;
+        this.course = course;
         this.enrollmentDate = enrollmentDate;
     }
 
-    public Enrollment(int enrollmentId, int studentId, int courseId, String enrollmentDate) {
+    public Enrollment(int enrollmentId, Student student, Course course, String enrollmentDate) {
         this.enrollmentId = enrollmentId;
-        this.studentId = studentId;
-        this.courseId = courseId;
+        this.student = student;
+        this.course = course;
         this.enrollmentDate = enrollmentDate;
     }
 
     public int getEnrollmentId() { return enrollmentId; }
     public void setEnrollmentId(int enrollmentId) { this.enrollmentId = enrollmentId; }
 
-    public int getStudentId() { return studentId; }
-    public void setStudentId(int studentId) { this.studentId = studentId; }
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
 
-    public int getCourseId() { return courseId; }
-    public void setCourseId(int courseId) { this.courseId = courseId; }
+    public Course getCourse() { return course; }
+    public void setCourse(Course course) { this.course = course; }
 
     public String getEnrollmentDate() { return enrollmentDate; }
     public void setEnrollmentDate(String enrollmentDate) { this.enrollmentDate = enrollmentDate; }
 
+    public int getStudentId() {
+        return student.getStudentId();
+    }
+
+    public int getCourseId() {
+        return course.getCourseId();
+    }
+
     @Override
     public String toString() {
         return "enrollmentId=" + enrollmentId +
-               ", studentId=" + studentId +
-               ", courseId=" + courseId +
+               ", studentId=" + getStudentId() +
+               ", courseId=" + getCourseId() +
                ", enrollmentDate=" + enrollmentDate + "\n";
     }
 }

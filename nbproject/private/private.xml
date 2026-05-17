@@ -3,17 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/controllers/EnrollmentController.java</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/models/Student.java</file>
+            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/controllers/EnrollmentController.java</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/models/Course.java</file>
-            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/config/DBConnection.java</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/app/Main.java</file>
-            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/styles/EnrollmentFormStyle.css</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/dao/EnrollmentDAO.java</file>
-            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/views/Enrollment.fxml</file>
+            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/META-INF/persistence.xml</file>
+            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/config/JPAUtil.java</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/models/Enrollment.java</file>
             <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/dao/CourseDAO.java</file>
-            <file>file:/C:/Users/Doaa/Documents/NetBeansProjects/CourseEnrollmentSystem/src/dao/StudentDAO.java</file>
         </group>
     </open-files>
 </project-private>

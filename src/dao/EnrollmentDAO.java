@@ -1,126 +1,97 @@
 package dao;
 
-import config.DBConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import config.JPAUtil;
 import java.util.List;
+import javax.persistence.EntityManager;
 import models.Enrollment;
 
 public class EnrollmentDAO {
 
     public List<Enrollment> findAll() {
-        List<Enrollment> list = new ArrayList<>();
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            String sql = "SELECT * FROM enrollment";
-            Statement stat = conn.createStatement();
-            ResultSet rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                Integer enrollment_id = rs.getInt("enrollment_id");
-                Integer student_id = rs.getInt("student_id");
-                Integer course_id = rs.getInt("course_id");
-                String enrollment_date = rs.getString("enrollment_date");
-                Enrollment e = new Enrollment(enrollment_id, student_id, course_id, enrollment_date);
-                list.add(e);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace(); 
+            em = JPAUtil.getEntityManager();
+            return em.createQuery("select e from Enrollment e", Enrollment.class).getResultList();
+        } finally {
+            em.close();
         }
-        return list;
     }
 
     public boolean isDuplicate(Enrollment e) {
-        String sql = "SELECT COUNT(*) FROM enrollment WHERE student_id=? AND course_id=?";
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, e.getStudentId());
-            ps.setInt(2, e.getCourseId());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace(); 
+            em = JPAUtil.getEntityManager();
+            Long count = em.createQuery(
+                    "SELECT COUNT(e) FROM Enrollment e WHERE e.student.studentId = :sid AND e.course.courseId = :cid",
+                    Long.class)
+                    .setParameter("sid", e.getStudent().getStudentId())
+                    .setParameter("cid", e.getCourse().getCourseId())
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
         }
-        return false;
     }
 
     public boolean insertOne(Enrollment e) {
         if (isDuplicate(e)) {
             return false;
         }
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO enrollment(student_id, course_id, enrollment_date) VALUES(?,?,?)"
-            );
-            ps.setInt(1, e.getStudentId());
-            ps.setInt(2, e.getCourseId());
-            ps.setString(3, e.getEnrollmentDate());
-            ps.executeUpdate();
+            em = JPAUtil.getEntityManager();
+            em.getTransaction().begin();
+            em.persist(e);
+            em.getTransaction().commit();
             return true;
-        } catch (SQLException ex) {
-            ex.printStackTrace(); 
+        } catch (Exception c) {
+            return false;
+        } finally {
+            em.close();
         }
-        return false;
     }
 
     public boolean updateOne(Enrollment e) {
-        String sql = "UPDATE enrollment SET student_id=?, course_id=?, enrollment_date=? WHERE enrollment_id=?";
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, e.getStudentId());
-            ps.setInt(2, e.getCourseId());
-            ps.setString(3, e.getEnrollmentDate());
-            ps.setInt(4, e.getEnrollmentId());
-            int noOfRows = ps.executeUpdate();
-            return noOfRows > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            em = JPAUtil.getEntityManager();
+            em.getTransaction().begin();
+            em.merge(e);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception c) {
+            return false;
+        } finally {
+            em.close();
         }
-        return false;
-    }
-
-    public List<Enrollment> findByStudentId(int studentId) {
-        List<Enrollment> list = new ArrayList<>();
-        String sql = "SELECT * FROM enrollment WHERE student_id=?";
-        try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, studentId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Enrollment e = new Enrollment(
-                    rs.getInt("enrollment_id"),
-                    rs.getInt("student_id"),
-                    rs.getInt("course_id"),
-                    rs.getString("enrollment_date")
-                );
-                list.add(e);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
     }
 
     public boolean deleteOne(Enrollment e) {
-        String sql = "DELETE FROM enrollment WHERE enrollment_id=?";
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, e.getEnrollmentId());
-            int noOfRows = ps.executeUpdate();
-            return noOfRows > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace(); 
+            em = JPAUtil.getEntityManager();
+            em.getTransaction().begin();
+            Enrollment managedEnrollment = em.merge(e);
+            em.remove(managedEnrollment);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception c) {
+            return false;
+        } finally {
+            em.close();
         }
-        return false;
+    }
+
+    public List<Enrollment> findByStudentId(int studentId) {
+        EntityManager em = null;
+        try {
+            em = JPAUtil.getEntityManager();
+            return em.createQuery(
+                    "SELECT e FROM Enrollment e WHERE e.student.studentId = :sid", Enrollment.class)
+                    .setParameter("sid", studentId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
 }

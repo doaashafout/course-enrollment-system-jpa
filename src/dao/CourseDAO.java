@@ -1,29 +1,30 @@
 package dao;
 
-import config.DBConnection;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import config.JPAUtil;
 import java.util.List;
+import javax.persistence.EntityManager;
+import models.Course;
 
 public class CourseDAO {
 
     public List<Integer> getAllCourseids() {
-        List<Integer> ids = new ArrayList<>();
+        EntityManager em = null;
         try {
-            Connection conn = DBConnection.getInstance().getConnection();
-            String sql = "SELECT course_id FROM courses";
-            Statement stat = conn.createStatement();
-            ResultSet rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                Integer course_id = rs.getInt("course_id");
-                ids.add(course_id);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            em = JPAUtil.getEntityManager();
+            return em.createQuery("select c.courseId from Course c", Integer.class).getResultList();
+        } finally {
+            em.close();
         }
-        return ids;
+    }
+
+    public Course findById(int course_id) {
+        EntityManager em = null;
+        try {
+            em = JPAUtil.getEntityManager();
+            Course c = em.find(Course.class, course_id);
+            return c;
+        } finally {
+            em.close();
+        }
     }
 }

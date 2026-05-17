@@ -1,7 +1,17 @@
 package models;
 
-public class Course {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+ public class Course {
+    @Id
+    @Column(name = "course_id")
     private int courseId;
+
+    @Column(name = "course_name")
     private String courseName;
 
     public Course() {}
