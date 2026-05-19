@@ -83,7 +83,7 @@ src/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/course-enrollment-system-jpa.git
+   git clone https://github.com/doaashafout/course-enrollment-system-jpa.git
    ```
 
 2. **Create the database in MySQL**
